@@ -1,0 +1,13 @@
+{
+  "name": "projectionlab-sheets-sync",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "package": "node scripts/package.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "jest": "^29.7.0"
+  }
+}

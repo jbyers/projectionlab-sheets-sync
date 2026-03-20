@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "ProjectionLab Sheets Sync",
+  "version": "0.9.0",
+  "description": "Sync account balances from a Google Sheet to ProjectionLab",
+  "permissions": ["storage", "scripting", "tabs"],
+  "host_permissions": [
+    "https://app.projectionlab.com/*",
+    "https://script.google.com/macros/*",
+    "https://script.googleusercontent.com/macros/*"
+  ],
+  "icons": {
+    "16": "icon_16.png",
+    "32": "icon_32.png",
+    "48": "icon_48.png",
+    "128": "icon_128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ProjectionLab Sheets Sync"
+  }
+}
