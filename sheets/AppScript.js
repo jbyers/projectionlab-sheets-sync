@@ -19,14 +19,14 @@ function doGet(_e) {
    * Configuration
    */
   const sheetName = "Sheet1"; // Required: name of the sheet tab
-  const sheetRange = "";      // Optional: blank exports the whole sheet, or e.g. "A:C" or "A1:E20"
+  const sheetRange = ""; // Optional: blank exports the whole sheet, or e.g. "A:C" or "A1:E20"
 
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(sheetName);
   const range = sheetRange ? sheet.getRange(sheetRange) : sheet.getDataRange();
   const data = range.getValues();
   const headers = data[0];
-  const jsonData = data.slice(1).map(row => {
+  const jsonData = data.slice(1).map((row) => {
     const obj = {};
     row.forEach((cell, i) => {
       if (cell === "") {
@@ -37,6 +37,7 @@ function doGet(_e) {
     return obj;
   });
 
-  return ContentService.createTextOutput(JSON.stringify(jsonData))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(jsonData)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
 }

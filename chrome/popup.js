@@ -6,8 +6,19 @@ import { parseJson, parseArray } from "./lib-parsers.js";
 const STORAGE_KEYS = ["dataUrl", "plApiKey"];
 
 // dryRun is a checkbox and handled separately in loadSettings/saveSettings.
-const ELEMENT_KEYS = ["dataUrl", "plApiKey", "dryRun", "devSection", "csvInput",
-  "saveBtn", "syncBtn", "log", "logList", "clearLog", "advancedLink"];
+const ELEMENT_KEYS = [
+  "dataUrl",
+  "plApiKey",
+  "dryRun",
+  "devSection",
+  "csvInput",
+  "saveBtn",
+  "syncBtn",
+  "log",
+  "logList",
+  "clearLog",
+  "advancedLink",
+];
 
 let isDev = false;
 
@@ -55,8 +66,13 @@ async function saveSettings() {
 
 // ── Data URL fetch ────────────────────────────────────────────────────────────
 function parseText(text, contentType = "") {
-  const looksLikeJson = contentType.includes("json") || text.trimStart().startsWith("[") || text.trimStart().startsWith("{");
-  return looksLikeJson ? parseJson(JSON.parse(text)) : parseArray(parseCsv(text));
+  const looksLikeJson =
+    contentType.includes("json") ||
+    text.trimStart().startsWith("[") ||
+    text.trimStart().startsWith("{");
+  return looksLikeJson
+    ? parseJson(JSON.parse(text))
+    : parseArray(parseCsv(text));
 }
 
 async function fetchUrl(url) {
@@ -68,7 +84,9 @@ async function fetchUrl(url) {
 
 // ── Find ProjectionLab tab ────────────────────────────────────────────────────
 async function findProjectionLabTab() {
-  const tabs = await chrome.tabs.query({ url: "https://app.projectionlab.com/*" });
+  const tabs = await chrome.tabs.query({
+    url: "https://app.projectionlab.com/*",
+  });
   if (tabs.length === 0) return null;
   // Prefer active tab, else first
   return tabs.find((t) => t.active) || tabs[0];
@@ -83,7 +101,7 @@ async function syncBalances(accounts, plApiKey, dryRun) {
     const api = window.projectionlabPluginAPI;
     if (!api) {
       throw new Error(
-        "ProjectionLab Plugin API not found: enable it in Account Settings → Plugin API"
+        "ProjectionLab Plugin API not found: enable it in Account Settings → Plugin API",
       );
     }
 
@@ -98,15 +116,15 @@ async function syncBalances(accounts, plApiKey, dryRun) {
     const today = exportedData?.today;
     if (!today) {
       throw new Error(
-        "exportData response missing \"today\": check your API key and that Current Finances has accounts"
+        'exportData response missing "today": check your API key and that Current Finances has accounts',
       );
     }
 
     const TYPE_MAP = {
-      asset:      today.assets             || [],
-      debt:       today.debts              || [],
+      asset: today.assets || [],
+      debt: today.debts || [],
       investment: today.investmentAccounts || [],
-      savings:    today.savingsAccounts    || [],
+      savings: today.savingsAccounts || [],
     };
 
     const byTypeAndName = {};
@@ -115,7 +133,10 @@ async function syncBalances(accounts, plApiKey, dryRun) {
       for (const acct of list) {
         const key = (acct.name || "").trim().toLowerCase();
         if (!key) continue;
-        if (nameMap.has(key)) throw new Error(`Duplicate account "${type} - ${acct.name}" in ProjectionLab`);
+        if (nameMap.has(key))
+          throw new Error(
+            `Duplicate account "${type} - ${acct.name}" in ProjectionLab`,
+          );
         nameMap.set(key, acct);
       }
       byTypeAndName[type] = nameMap;
@@ -129,18 +150,30 @@ async function syncBalances(accounts, plApiKey, dryRun) {
     const nameMap = byTypeAndName[normalizedType];
 
     if (!nameMap) {
-      return { name, status: "error", message: `Unknown type "${type}" (expected: asset, debt, investment, savings)` };
+      return {
+        name,
+        status: "error",
+        message: `Unknown type "${type}" (expected: asset, debt, investment, savings)`,
+      };
     }
 
     const lookupKey = name.trim().toLowerCase();
     const plAccount = nameMap.get(lookupKey);
 
     if (!plAccount) {
-      return { name, status: "warn", message: `no matching ${normalizedType} found in ProjectionLab` };
+      return {
+        name,
+        status: "warn",
+        message: `no matching ${normalizedType} found in ProjectionLab`,
+      };
     }
 
     if (!plAccount.id) {
-      return { name, status: "error", message: `account found but has no ID field` };
+      return {
+        name,
+        status: "error",
+        message: `account found but has no ID field`,
+      };
     }
 
     if (plAccount.balance === balance) {
@@ -148,21 +181,37 @@ async function syncBalances(accounts, plApiKey, dryRun) {
     }
 
     if (dryRun) {
-      return { name, status: "success", message: `would update from: ${plAccount.balance} to: ${balance} [dry-run]` };
+      return {
+        name,
+        status: "success",
+        message: `would update from: ${plAccount.balance} to: ${balance} [dry-run]`,
+      };
     }
 
     try {
-      await window.projectionlabPluginAPI.updateAccount(plAccount.id, { balance }, { key: plApiKey });
+      await window.projectionlabPluginAPI.updateAccount(
+        plAccount.id,
+        { balance },
+        { key: plApiKey },
+      );
       return { name, status: "success", message: `updated to ${balance}` };
     } catch (e) {
-      return { name, status: "error", message: `updateAccount failed: ${e.message || e}` };
+      return {
+        name,
+        status: "error",
+        message: `updateAccount failed: ${e.message || e}`,
+      };
     }
   }
 
   const exportedData = await getProjectionLabData(plApiKey);
   const byTypeAndName = buildAccountMaps(exportedData);
 
-  return Promise.all(accounts.map(account => syncBalance(account, byTypeAndName, plApiKey, dryRun)));
+  return Promise.all(
+    accounts.map((account) =>
+      syncBalance(account, byTypeAndName, plApiKey, dryRun),
+    ),
+  );
 }
 
 // ── Main sync handler ─────────────────────────────────────────────────────────
@@ -180,7 +229,8 @@ function validateAccounts(accounts) {
   const seenSheet = new Set();
   for (const { type, name } of accounts) {
     const key = `${type?.trim().toLowerCase()}:${name.trim().toLowerCase()}`;
-    if (seenSheet.has(key)) throw new Error(`Duplicate account "${type} - ${name}" in source data`);
+    if (seenSheet.has(key))
+      throw new Error(`Duplicate account "${type} - ${name}" in source data`);
     seenSheet.add(key);
   }
 }
@@ -188,7 +238,9 @@ function validateAccounts(accounts) {
 async function performSync(accounts, plApiKey, dryRun) {
   const tab = await findProjectionLabTab();
   if (!tab) {
-    throw new Error("No ProjectionLab tab found: open app.projectionlab.com first");
+    throw new Error(
+      "No ProjectionLab tab found: open app.projectionlab.com first",
+    );
   }
   addLog(`Syncing to ProjectionLab tab: "${tab.title || tab.url}"`, "info");
 
@@ -200,7 +252,9 @@ async function performSync(accounts, plApiKey, dryRun) {
   });
 
   if (result.error) {
-    throw new Error(`Error fetching state: ${(result.error.message || String(result.error))}`);
+    throw new Error(
+      `Error fetching state: ${result.error.message || String(result.error)}`,
+    );
   }
 
   return result.result;
@@ -213,7 +267,12 @@ function displaySyncResults(syncResults) {
     counts[r.status] = (counts[r.status] ?? 0) + 1;
   }
 
-  const { success: successCount, info: infoCount, warn: warnCount, error: errCount } = counts;
+  const {
+    success: successCount,
+    info: infoCount,
+    warn: warnCount,
+    error: errCount,
+  } = counts;
 
   const summary = [];
   if (successCount) summary.push(`${successCount} synced`);
@@ -232,14 +291,19 @@ async function runSync() {
     const dataUrl = els.dataUrl.value.trim();
     const plApiKey = els.plApiKey.value.trim();
     const dryRun = els.dryRun.checked;
-    const devText = !els.devSection.classList.contains("hidden") ? els.csvInput.value.trim() : "";
+    const devText = !els.devSection.classList.contains("hidden")
+      ? els.csvInput.value.trim()
+      : "";
 
     if (!plApiKey) throw new Error("ProjectionLab API Key is required");
     if (dryRun) addLog("Dry-run mode: no changes will be written", "warn");
 
     const accounts = await getAccounts(dataUrl, devText);
     validateAccounts(accounts);
-    addLog(`Found data for ${accounts.length} account${accounts.length === 1 ? "" : "s"}`, "info");
+    addLog(
+      `Found data for ${accounts.length} account${accounts.length === 1 ? "" : "s"}`,
+      "info",
+    );
 
     const syncResults = await performSync(accounts, plApiKey, dryRun);
     displaySyncResults(syncResults);
