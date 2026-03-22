@@ -1,3 +1,5 @@
+![Node.js test suite](https://github.com/jbyers/projectionlab-sheets-sync/actions/workflows/node.js.yml/badge.svg)
+
 # ProjectionLab Sheets Sync
 
 Chrome extension that syncs account balances from a Google Sheet into ProjectionLab using the [Plugin API](https://app.projectionlab.com/docs/module-PluginAPI.html).
@@ -97,8 +99,8 @@ Similarly, JSON is an array of dicts:
 [
    {
       "type": "Savings,
-      "Name": "Chase Checking",
-      "Balance": 5608
+      "name": "Chase Checking",
+      "balance": 5608
    }
 ]
 ```
