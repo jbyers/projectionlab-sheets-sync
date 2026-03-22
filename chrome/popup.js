@@ -6,19 +6,19 @@ import { parseJson, parseArray } from "./lib-parsers.js";
 const STORAGE_KEYS = ["dataUrl", "dryRun", "plApiKey"];
 
 const ELEMENT_KEYS = [
-  // STORAGE_KEYS
+  // STORAGE
   "dataUrl",
   "dryRun",
   "plApiKey",
   // ELEMENTS
-  "devSection",
+  "advancedLink",
+  "clearLog",
   "csvInput",
-  "saveBtn",
-  "syncBtn",
+  "devSection",
   "log",
   "logList",
-  "clearLog",
-  "advancedLink",
+  "saveBtn",
+  "syncBtn",
 ];
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
