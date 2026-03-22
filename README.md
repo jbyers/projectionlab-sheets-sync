@@ -33,6 +33,10 @@ Notes:
 - Balances present in the Sheet but missing in ProjectionLab will generate a warning
 - Balances present in ProjectionLab but missing from the Sheet will do nothing
 
+## Screenshot
+
+![Screenshot](./images/Chrome-Screenshot-2-1280x800.png)
+
 ## Setup
 
 ### 1. Install the extension
