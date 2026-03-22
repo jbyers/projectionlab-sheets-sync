@@ -31,7 +31,7 @@ try {
   }
   const allUrlsManifest = structuredClone(manifest);
   allUrlsManifest.host_permissions = ['<all_urls>'];
-  writeFileSync(join(tmpDir, 'manifest.json'), JSON.stringify(allUrlsManifest, null, 2) + '\n');
+  writeFileSync(join(tmpDir, 'manifest.json'), `${JSON.stringify(allUrlsManifest, null, 2)}\n`);
   zip(join(root, `releases/ProjectionLab-Sheets-Sync-${version}.zip`), tmpDir, mdFiles);
 } finally {
   rmSync(tmpDir, { recursive: true, force: true });

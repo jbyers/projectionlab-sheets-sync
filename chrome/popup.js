@@ -1,5 +1,3 @@
-"use strict";
-
 import { parse as parseCsv } from "./lib-vanillaes-csv.js";
 import { parseJson, parseArray } from "./lib-parsers.js";
 
@@ -202,7 +200,7 @@ async function performSync(accounts, plApiKey, dryRun) {
   });
 
   if (result.error) {
-    throw new Error("Error fetching state: " + (result.error.message || String(result.error)));
+    throw new Error(`Error fetching state: ${(result.error.message || String(result.error))}`);
   }
 
   return result.result;

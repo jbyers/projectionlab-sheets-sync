@@ -2,7 +2,7 @@
  * ProjectionLab Sheet Sync Chrome Extension
  * Exports Google Sheet account balances in JSON for import into ProjectionLab
  *
- * Updated: 2026-05-21
+ * Updated: 2026-05-22
  * Instructions: https://github.com/jbyers/projectionlab-sheets-sync
  *
  * This AppScript code exports a range of data in the associated Google Sheet
@@ -12,7 +12,9 @@
  * Follow the instructions linked above. Review and edit sheetName and
  * sheetRange variables below.
  */
-function doGet(e) {
+
+// biome-ignore lint:correctness/noUnusedFunctions: called by Google Apps Script runtime
+function doGet(_e) {
   /**
    * Configuration
    */
@@ -25,7 +27,7 @@ function doGet(e) {
   const data = range.getValues();
   const headers = data[0];
   const jsonData = data.slice(1).map(row => {
-    let obj = {};
+    const obj = {};
     row.forEach((cell, i) => {
       if (cell === "") {
         return;

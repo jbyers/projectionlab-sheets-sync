@@ -3,7 +3,7 @@ export function parseBalance(balance, type, name) {
     return Math.trunc(balance);
   }
 
-  if (typeof balance === "string" && /^[0-9.\-]+$/.test(balance)) {
+  if (typeof balance === "string" && /^[0-9.-]+$/.test(balance)) {
     return Math.trunc(Number(balance));
   }
 
