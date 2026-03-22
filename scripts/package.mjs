@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const chromeDir = join(root, 'chrome');
-const readmePath = join(root, 'README.md');
+const mdFiles = readdirSync(root).filter(f => f.endsWith('.md')).map(f => join(root, f));
 
 const manifest = JSON.parse(readFileSync(join(chromeDir, 'manifest.json'), 'utf8'));
 const { version } = manifest;
@@ -19,8 +19,8 @@ function zip(zipPath, sourceDir, extraFiles = []) {
   console.log(`Created ${zipPath}`);
 }
 
-// chrome-X.Y.Z.zip: chrome/ files + README.md
-zip(join(root, `releases/chrome-${version}.zip`), chromeDir, [readmePath]);
+// chrome-X.Y.Z.zip: chrome/ files + *.md
+zip(join(root, `releases/chrome-${version}.zip`), chromeDir, mdFiles);
 
 // ProjectionLab-Sheets-Sync-X.Y.Z.zip: same but manifest has <all_urls> in host_permissions
 const tmpDir = join(root, '.tmp-package');
@@ -32,7 +32,7 @@ try {
   const allUrlsManifest = structuredClone(manifest);
   allUrlsManifest.host_permissions = ['<all_urls>'];
   writeFileSync(join(tmpDir, 'manifest.json'), JSON.stringify(allUrlsManifest, null, 2) + '\n');
-  zip(join(root, `releases/ProjectionLab-Sheets-Sync-${version}.zip`), tmpDir, [readmePath]);
+  zip(join(root, `releases/ProjectionLab-Sheets-Sync-${version}.zip`), tmpDir, mdFiles);
 } finally {
   rmSync(tmpDir, { recursive: true, force: true });
 }
