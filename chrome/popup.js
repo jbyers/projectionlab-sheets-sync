@@ -3,13 +3,14 @@ import { parseJson, parseArray } from "./lib-parsers.js";
 
 // Text input keys synced to chrome.storage (API key is stored in Chrome sync storage,
 // which is encrypted at rest but does sync to Google's servers).
-const STORAGE_KEYS = ["dataUrl", "plApiKey"];
+const STORAGE_KEYS = ["dataUrl", "dryRun", "plApiKey"];
 
-// dryRun is a checkbox and handled separately in loadSettings/saveSettings.
 const ELEMENT_KEYS = [
+  // STORAGE_KEYS
   "dataUrl",
-  "plApiKey",
   "dryRun",
+  "plApiKey",
+  // ELEMENTS
   "devSection",
   "csvInput",
   "saveBtn",
@@ -19,8 +20,6 @@ const ELEMENT_KEYS = [
   "clearLog",
   "advancedLink",
 ];
-
-let isDev = false;
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const els = {};
@@ -45,13 +44,12 @@ function clearLog() {
 
 // ── Settings persistence ──────────────────────────────────────────────────────
 async function loadSettings() {
-  const stored = await chrome.storage.sync.get([...STORAGE_KEYS, "dryRun"]);
+  const stored = await chrome.storage.sync.get(STORAGE_KEYS);
   for (const key of STORAGE_KEYS) {
     if (stored[key] !== undefined) {
       els[key].value = stored[key];
     }
   }
-  els.dryRun.checked = isDev ? stored.dryRun !== false : stored.dryRun === true;
 }
 
 async function saveSettings() {
@@ -317,9 +315,6 @@ async function runSync() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
-  const info = await chrome.management.getSelf();
-  isDev = info.installType === "development";
-  if (isDev) els.devSection.classList.remove("hidden");
   const updateAdvancedLink = () => {
     els.advancedLink.textContent = els.devSection.classList.contains("hidden")
       ? "Advanced Options"
