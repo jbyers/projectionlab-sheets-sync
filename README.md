@@ -49,7 +49,7 @@ Notes:
 
  1. Create a Google Sheet with a table of account types, names, and balances you wish to sync
  2. In the Sheet, click **Extensions → Apps Script**
- 3. Paste the code in [AppScript.js](sheets/AppScript.js) into the default file `Code.js`
+ 3. Paste the code in [AppScript.js](https://raw.githubusercontent.com/jbyers/projectionlab-sheets-sync/refs/heads/main/sheets/AppScript.js) into the default file `Code.js`
  4. Update the `sheetName` variable below to match the name of the sheet you wish to export
  5. Optionally set `sheetRange` to restrict the rows and columns you export
  6. Click **Save** and **Deploy**
