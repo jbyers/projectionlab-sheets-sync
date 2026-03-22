@@ -75,6 +75,7 @@ Notes:
 
 You can replace the Google Sheets Data URL with any endpoint that serves CSV or JSON in the correct format. Because I don't want the public version of the extension to ask for access to all websites, you must download and install the extension from GitHub locally:
 
+https://github.com/jbyers/projectionlab-sheets-sync/releases
 
 The only change is to `manifest.json`:
 
