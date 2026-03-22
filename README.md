@@ -45,7 +45,7 @@ Notes:
 1. Log in to ProjectionLab, go to **Account Settings → Plugin API**
 2. Enable the plugin API and copy the key
 3. Open the extension by clicking on it in the Chrome extensions menu
-4. Paste the API key in the popup under **ProjectionLab API Key** and click **Save Settings**
+4. Paste the API key in the popup under **ProjectionLab API Key**. Settings are saved automatically.
 
 ### 3. Google Sheets setup
 
@@ -57,7 +57,7 @@ Notes:
  6. Click **Save** and **Deploy**
  7. Select `Web App`, `Execute as Me`, and grant access to `Only myself`
  8. Test by pasting the web app URL `https://script.google.com/...` into your browser: if you see JSON with types, names, and balances, it's working
- 9. Open the extension, paste the web app URL into the `Data URL` field, and click **Save Settings**
+ 9. Open the extension, paste the web app URL into the `Data URL` field. Settings are saved automatically.
 
 ### 4. Sync
 

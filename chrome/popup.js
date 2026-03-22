@@ -17,7 +17,6 @@ const ELEMENT_KEYS = [
   "devSection",
   "log",
   "logList",
-  "saveBtn",
   "syncBtn",
 ];
 
@@ -47,7 +46,11 @@ async function loadSettings() {
   const stored = await chrome.storage.sync.get(STORAGE_KEYS);
   for (const key of STORAGE_KEYS) {
     if (stored[key] !== undefined) {
-      els[key].value = stored[key];
+      if (els[key].type === "checkbox") {
+        els[key].checked = stored[key];
+      } else {
+        els[key].value = stored[key];
+      }
     }
   }
 }
@@ -55,11 +58,26 @@ async function loadSettings() {
 async function saveSettings() {
   const data = {};
   for (const key of STORAGE_KEYS) {
-    data[key] = els[key].value.trim();
+    if (els[key].type === "checkbox") {
+      data[key] = els[key].checked;
+    } else {
+      data[key] = els[key].value.trim();
+    }
   }
-  data.dryRun = els.dryRun.checked;
   await chrome.storage.sync.set(data);
-  addLog("Settings saved.", "success");
+}
+
+// ── UI Helpers ────────────────────────────────────────────────────────────────
+function updateAdvancedLink() {
+  els.advancedLink.textContent = els.devSection.classList.contains("hidden")
+    ? "Advanced Options"
+    : "Hide Advanced Options";
+}
+
+function toggleAdvanced(e) {
+  e.preventDefault();
+  els.devSection.classList.toggle("hidden");
+  updateAdvancedLink();
 }
 
 // ── Data URL fetch ────────────────────────────────────────────────────────────
@@ -315,20 +333,14 @@ async function runSync() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
-  const updateAdvancedLink = () => {
-    els.advancedLink.textContent = els.devSection.classList.contains("hidden")
-      ? "Advanced Options"
-      : "Hide Advanced Options";
-  };
-  updateAdvancedLink();
-  els.advancedLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    els.devSection.classList.toggle("hidden");
-    updateAdvancedLink();
-  });
-
   await loadSettings();
-  els.saveBtn.addEventListener("click", saveSettings);
-  els.syncBtn.addEventListener("click", runSync);
+
+  els.advancedLink.addEventListener("click", toggleAdvanced);
   els.clearLog.addEventListener("click", clearLog);
+  els.syncBtn.addEventListener("click", runSync);
+
+  // Auto-save settings on change
+  els.dataUrl.addEventListener("input", saveSettings);
+  els.plApiKey.addEventListener("input", saveSettings);
+  els.dryRun.addEventListener("change", saveSettings);
 });
